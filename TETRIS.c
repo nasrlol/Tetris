@@ -26,7 +26,6 @@ static const int CELL_WIDTH = SCREEN_WIDTH / COLUMNS;
 static const int CELL_HEIGHT = SCREEN_HEIGHT / ROWS;
 
 static int SCORE = 0;
-static int FRAME_COUNTER = 0;
 
 typedef struct
 {
@@ -191,7 +190,7 @@ void MOVE_TETROMINO(TETROMINO *tetromino)
             tetromino->x++;
         if (IsKeyDown(KEY_LEFT) && tetromino->x > 0)
             tetromino->x--;
-        if (IsKeyDown(KEY_DOWN))
+        if (IsKeyDown(KEY_DOWN) && tetromino->y < ROWS + 1 )
             tetromino->y++;
     }
 }
@@ -225,11 +224,17 @@ void DRAW_SAVED_TETROMINO(int **GRID, TETROMINO *tetromino)
     }
 }
 
-void DRAW_STATS()
+void DRAW_STATS(TETROMINO *tetromino)
 {
     char SCORE_TEXT[16];
-    sprintf(SCORE_TEXT, "Score: %d", SCORE);
+    sprintf(SCORE_TEXT, "SCORE: %d", SCORE);
     DrawText(SCORE_TEXT, 10, 10, FONT_SIZE, BLUE);
+
+    char CURRENT_Y_POSITION[16], CURRENT_X_POSITION[16];
+    sprintf(CURRENT_Y_POSITION, "Y: %d", tetromino->y);
+    sprintf(CURRENT_X_POSITION, "X: %d", tetromino->x); 
+    DrawText(CURRENT_Y_POSITION, 10, 20, FONT_SIZE, BLUE);
+    DrawText(CURRENT_X_POSITION, 10, 30, FONT_SIZE, BLUE);
 }
 
 int main()
