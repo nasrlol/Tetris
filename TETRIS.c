@@ -205,7 +205,7 @@ void SAVE_TETROMINO(TETROMINO *tetromino, int **GRID)
             {
                 int GRIDX = tetromino->x + x;
                 int GRIDY = tetromino->y + y;
-                if (GRIDX <= COLUMNS && GRIDY >= 0 && GRIDY <= ROWS - 2)
+                if (GRIDX < COLUMNS && GRIDY >= 0 && GRIDY < ROWS)
                     GRID[GRIDY][GRIDX] = 1;
             }
         }
@@ -219,7 +219,7 @@ void DRAW_SAVED_TETROMINO(int **GRID, TETROMINO *tetromino)
         for (int x = 0; x < COLUMNS; x++)
         {
             if (GRID[y][x] == 1)
-                DrawRectangle(x * CELL_WIDTH, y * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT, tetromino->color);
+                DrawRectangle((x * CELL_WIDTH) , (y * CELL_HEIGHT) , CELL_WIDTH, CELL_HEIGHT, tetromino->color);
         }
     }
 }
@@ -237,6 +237,27 @@ void DRAW_STATS(TETROMINO *tetromino)
     DrawText(CURRENT_X_POSITION, 10, 50, FONT_SIZE, BLUE);
 }
 
+void CHECK_FULL_LINE(int **GRID)
+{
+    int LAST_LINE_Y = ROWS - 2;
+    bool FULL_LINE = true;
+
+    for (int x = 0; x <= COLUMNS; x++)
+    {
+        if (GRID[LAST_LINE_Y][x] == 0)
+        {
+            FULL_LINE = false;
+        }
+                
+    }
+    if (!FULL_LINE){
+        for (int x = 0; x <= COLUMNS; x++)
+        {
+            GRID[LAST_LINE_Y][x] = GRID[LAST_LINE_Y][0];
+        }
+    } 
+}
+
 int main()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tetris");
@@ -246,6 +267,7 @@ int main()
     int **GRID = CREATE_TETROMINOS_GRID(ROWS, COLUMNS);
     if (!GRID)
     {
+        printf("FAILED TO ALLOCATE MEMORY FOR THE GRID");
         CloseWindow();
         return 1;
     }
