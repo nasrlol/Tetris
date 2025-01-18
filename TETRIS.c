@@ -204,47 +204,50 @@ void CHECK_FULL_LINE(int **GRID)
 
 
 // Detect if the active tetromino is hitting another tetromino
+// Detect if the active tetromino is hitting another tetromino
 int COLLISION_DETECTION(TETROMINO *tetromino, int **GRID)
 {
+    int TETROMINO_WIDTH = 0;
+    int TETROMINO_HEIGHT = 0;
 
-    // FIND THE WIDTH AND HEIGHT OF THE ACTIVE TETROMINO
-
-    int CURRENT_LOWEST_INDEX_X = 0;
-    int CURRENT_LOWEST_INDEX_Y = 0; 
-
+    // Determine the bounding width and height of the tetromino
     for (int y = 0; y < TETROMINO_SIZE_HEIGHT; y++)
     {
         for (int x = 0; x < TETROMINO_SIZE_WIDTH; x++)
         {
-          if (tetromino->blocks[y][x] == 1)
-          {
-            CURRENT_LOWEST_INDEX_X = x;    
-            CURRENT_LOWEST_INDEX_Y = y;
-          }
+            if (tetromino->blocks[y][x] == 1)
+            {
+                // Update width and height based on the furthest active blocks
+                if (x + 1 > TETROMINO_WIDTH)
+                    TETROMINO_WIDTH = x + 1;
+                if (y + 1 > TETROMINO_HEIGHT)
+                    TETROMINO_HEIGHT = y + 1;
+            }
         }
     }
 
-
-    for (int i = 0; i < TETROMINO_SIZE_HEIGHT; i++)
+    // Check for collision with the grid
+    for (int i = 0; i < TETROMINO_HEIGHT; i++)
     {
-        for (int j = 0; j < TETROMINO_SIZE_WIDTH; j++)
+        for (int j = 0; j < TETROMINO_WIDTH; j++)
         {
             if (tetromino->blocks[i][j] == 1)
             {
                 int GRID_X = tetromino->x + j;
                 int GRID_Y = tetromino->y + i;
 
-                
-                // BLOCKS COLLISION
-                if (GRID_Y > 0 && GRID[GRID_Y][GRID_X] != 0)
-                    return 1;
+                // Check if we are within the grid boundaries and if there is a block
+                if (GRID_Y >= 0 && GRID_X >= 0 && GRID[GRID_Y][GRID_X] != 0)
+                {
+                    return 1; // Collision detected
+                }
             }
         }
     }
-    // NO COLLISION
+
+    // No collision
     return 0;
 }
-
 int *ROTATE_ACTIVE_TETROMINO(TETROMINO *tetromino, int **GRID)
 {
     int *ROTATED_TETROMINO;
@@ -394,6 +397,9 @@ int main()
             SCORE++;
             SAVE_TETROMINO(&ACTIVE_TETROMINO, GRID);
             ACTIVE_TETROMINO = SPAWN_TETROMINO();
+            printf("DEBUGGING INFORMATION - XOR %p: ",&ACTIVE_TETROMINO.x);
+            printf("DEBUGGING INFORMATION - YOR %p: ",&ACTIVE_TETROMINO.y);
+
         }
 
         EndDrawing();
